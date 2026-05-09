@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.graphics</groupId>
+    <artifactId>opengl-java-class</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <lwjgl.version>3.3.3</lwjgl.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.lwjgl</groupId>
+                <artifactId>lwjgl-bom</artifactId>
+                <version>${lwjgl.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- LWJGL modules -->
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId></dependency>
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId></dependency>
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId></dependency>
+
+        <!-- macOS natives -->
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId>
+            <classifier>natives-macos</classifier><scope>runtime</scope></dependency>
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId>
+            <classifier>natives-macos</classifier><scope>runtime</scope></dependency>
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId>
+            <classifier>natives-macos</classifier><scope>runtime</scope></dependency>
+
+        <!-- macOS ARM64 natives -->
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId>
+            <classifier>natives-macos-arm64</classifier><scope>runtime</scope></dependency>
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId>
+            <classifier>natives-macos-arm64</classifier><scope>runtime</scope></dependency>
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId>
+            <classifier>natives-macos-arm64</classifier><scope>runtime</scope></dependency>
+
+        <!-- Linux natives -->
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId>
+            <classifier>natives-linux</classifier><scope>runtime</scope></dependency>
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId>
+            <classifier>natives-linux</classifier><scope>runtime</scope></dependency>
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId>
+            <classifier>natives-linux</classifier><scope>runtime</scope></dependency>
+
+        <!-- Windows natives -->
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId>
+            <classifier>natives-windows</classifier><scope>runtime</scope></dependency>
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-glfw</artifactId>
+            <classifier>natives-windows</classifier><scope>runtime</scope></dependency>
+        <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-opengl</artifactId>
+            <classifier>natives-windows</classifier><scope>runtime</scope></dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-XstartOnFirstThread</argument>
+                        <argument>-cp</argument>
+                        <classpath/>
+                        <argument>com.graphics.AppFlappyBird</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
