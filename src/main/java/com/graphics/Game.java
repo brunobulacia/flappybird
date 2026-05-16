@@ -11,32 +11,32 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Game {
 
     // dimensiones de ventana
-    private static final int WIDTH  = 900;
+    private static final int WIDTH = 900;
     private static final int HEIGHT = 700;
 
     // dificultad progresiva
-    private static final float BASE_SPEED           = 0.62f;
-    private static final float MAX_SPEED            = 1.50f;
-    private static final float BASE_SPAWN_INTERVAL  = 1.5f;
-    private static final float MIN_SPAWN_INTERVAL   = 0.7f;
+    private static final float BASE_SPEED = 0.62f; // 0.62f;
+    private static final float MAX_SPEED = 1.50f;
+    private static final float BASE_SPAWN_INTERVAL = 1.5f;
+    private static final float MIN_SPAWN_INTERVAL = 0.7f;
 
     // rango de altura del centro del hueco
     private static final float GAP_MIN_Y = -0.42f;
-    private static final float GAP_MAX_Y =  0.42f;
+    private static final float GAP_MAX_Y = 0.42f;
 
     // objetos principales
-    private long         window;
-    private Renderer     renderer;
+    private long window;
+    private Renderer renderer;
     private InputManager input;
     private SoundManager sound;
 
     // estado del juego
-    private Bird[]     birds  = new Bird[2];
+    private Bird[] birds = new Bird[2];
     private List<Pipe> pipes;
-    private float      spawnTimer;
-    private Random     random;
-    private GameState  state;
-    private boolean    gameOverSoundPlayed;
+    private float spawnTimer;
+    private Random random;
+    private GameState state;
+    private boolean gameOverSoundPlayed;
 
     // =========================================================
     // API pública
@@ -54,7 +54,8 @@ public class Game {
     // =========================================================
 
     private void init() {
-        if (!glfwInit()) throw new RuntimeException("GLFW no pudo inicializarse");
+        if (!glfwInit())
+            throw new RuntimeException("GLFW no pudo inicializarse");
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -63,7 +64,8 @@ public class Game {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
         window = glfwCreateWindow(WIDTH, HEIGHT, "Flappy Bird OpenGL", 0, 0);
-        if (window == 0) throw new RuntimeException("No se pudo crear la ventana");
+        if (window == 0)
+            throw new RuntimeException("No se pudo crear la ventana");
 
         glfwMakeContextCurrent(window);
         glfwSwapInterval(1); // vsync
@@ -74,10 +76,10 @@ public class Game {
         renderer = new Renderer();
         renderer.init();
 
-        input  = new InputManager(window);
-        sound  = new SoundManager();
+        input = new InputManager(window);
+        sound = new SoundManager();
         random = new Random();
-        pipes  = new ArrayList<>();
+        pipes = new ArrayList<>();
     }
 
     // =========================================================
@@ -89,7 +91,7 @@ public class Game {
         birds[1] = new Bird(1);
         pipes.clear();
         spawnTimer = 0f;
-        state      = GameState.START;
+        state = GameState.START;
         gameOverSoundPlayed = false;
         updateWindowTitle();
     }
@@ -105,7 +107,8 @@ public class Game {
             long now = System.nanoTime();
             float dt = (now - lastTime) / 1_000_000_000f;
             lastTime = now;
-            if (dt > 0.033f) dt = 0.033f; // cap a 30 fps mínimo
+            if (dt > 0.033f)
+                dt = 0.033f; // cap a 30 fps mínimo
 
             input.update();
             processInput();
@@ -139,16 +142,20 @@ public class Game {
 
         // salto jugador 1 (SPACE)
         if (input.player1Jumped) {
-            if (state == GameState.START) state = GameState.PLAYING;
+            if (state == GameState.START)
+                state = GameState.PLAYING;
             birds[0].jump();
-            if (birds[0].alive) sound.playJump();
+            if (birds[0].alive)
+                sound.playJump();
         }
 
         // salto jugador 2 (W o flecha arriba)
         if (input.player2Jumped) {
-            if (state == GameState.START) state = GameState.PLAYING;
+            if (state == GameState.START)
+                state = GameState.PLAYING;
             birds[1].jump();
-            if (birds[1].alive) sound.playJump();
+            if (birds[1].alive)
+                sound.playJump();
         }
     }
 
@@ -180,7 +187,7 @@ public class Game {
 
                 // colisión AABB
                 if (bird.alive && bird.collidesWith(pipe)) {
-                    bird.alive = false;
+                    bird.hit();
                 }
 
                 // puntaje: la tubería pasó la posición X del pájaro
@@ -221,6 +228,10 @@ public class Game {
         return Math.min(BASE_SPEED + maxScore * 0.022f, MAX_SPEED);
     }
 
+    // =========================================================
+    // Intervalo de spawn progresivo (req 2.3)
+    // =========================================================
+
     private float getSpawnInterval() {
         int maxScore = Math.max(birds[0].score, birds[1].score);
         // se acorta 0.016s por punto hasta el mínimo
@@ -237,10 +248,10 @@ public class Game {
         String vel = String.format("%.1fx", getSpeed() / BASE_SPEED);
 
         String title = switch (state) {
-            case START     -> "Flappy Bird | P1: SPACE  P2: W/↑ | para empezar";
-            case PLAYING   -> String.format(
-                    "Flappy Bird | P1: %d pts (%s)  P2: %d pts (%s) | Vel: %s",
-                    birds[0].score, p1, birds[1].score, p2, vel);
+            case START -> "Flappy Bird | P1: SPACE  P2: W/↑ | para empezar";
+            case PLAYING -> String.format(
+                    "Flappy Bird | P1: %d pts (%s)  P2: %d pts (%s) | Vel: %s | Vidas: P1=%d P2=%d",
+                    birds[0].score, p1, birds[1].score, p2, vel, birds[0].lives, birds[1].lives);
             case GAME_OVER -> String.format(
                     "Flappy Bird | P1: %d  P2: %d | GAME OVER — R/SPACE/W para reiniciar",
                     birds[0].score, birds[1].score);

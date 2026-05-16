@@ -2,10 +2,11 @@ package com.graphics;
 
 public class Pipe {
 
-    public static final float W        = 0.18f;
-    public static final float GAP_H    = 0.48f;
-    public static final float SPAWN_X  = 1.2f;
-    public static final float REMOVE_X = -1.4f;
+    public static final float W = 0.18f; // Ancho de la tubería
+    public static final float GAP_H = 0.48f; // Altura del espacio entre tuberías (gap)
+    public static final float SPAWN_X = 1.2f; // Posición X donde aparecen las tuberías (fuera de pantalla derecha)
+    public static final float REMOVE_X = -1.4f; // Posición X donde se eliminan las tuberías (fuera de pantalla
+                                                // izquierda)
 
     public float x;
     public float gapCenterY;
