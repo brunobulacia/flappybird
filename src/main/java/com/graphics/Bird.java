@@ -19,6 +19,7 @@ public class Bird {
     public static final float[][] COLORS = {
             { 0.98f, 0.85f, 0.20f }, // amarillo
             { 0.20f, 0.60f, 0.98f }, // azul
+            { 0.20f, 0.98f, 0.20f }, // verde
             { 0.6f, 0.6f, 0.6f } // gris
     };
 
@@ -40,6 +41,8 @@ public class Bird {
     public void reset() {
         // posiciones Y iniciales separadas para que no se superpongan
         y = (playerIndex == 0) ? 0.12f : -0.12f;
+        if (playerIndex == 2)
+            y = 0f;
         velY = 0f;
         alive = true;
         score = 0;

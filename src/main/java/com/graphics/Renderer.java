@@ -272,7 +272,7 @@ public class Renderer {
         float bx = Bird.X;
         float by = bird.y;
         float tilt = bird.getTilt();
-        float[] col = bird.alive ? bird.getColor() : Bird.COLORS[2];
+        float[] col = bird.alive ? bird.getColor() : Bird.COLORS[3];
         float r = col[0], g = col[1], bv = col[2];
 
         float wing = (float) Math.sin(bird.wingAnim * 9.0) * 0.022f;
@@ -333,11 +333,12 @@ public class Renderer {
     private void drawHUD(Bird[] birds, float speed) {
         drawScore(birds[0].score, -0.92f, 0.92f, Bird.COLORS[0]);
         drawScore(birds[1].score, 0.50f, 0.92f, Bird.COLORS[1]);
+        drawScore(birds[2].score, 1.02f, 0.92f, Bird.COLORS[2]);
         drawSpeedBar(speed);
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             if (!birds[i].alive) {
-                float ix = (i == 0) ? -0.82f : 0.62f;
+                float ix = (i == 0) ? -0.82f : (i == 1) ? 0.62f : 1.02f;
                 rect(ix, 0.70f, 0.09f, 0.008f, (float) Math.PI / 4f, 0.9f, 0.15f, 0.15f, 1f);
                 rect(ix, 0.70f, 0.09f, 0.008f, -(float) Math.PI / 4f, 0.9f, 0.15f, 0.15f, 1f);
             }

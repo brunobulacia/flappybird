@@ -12,7 +12,8 @@ public class Pipe {
     public float gapCenterY;
 
     // registro independiente de puntaje para cada jugador
-    public boolean[] scored = new boolean[2];
+    public boolean[] scored = new boolean[3]; // scored[0] para jugador 1, scored[1] para jugador 2, scored[2] para
+                                              // jugador 3
 
     public Pipe(float x, float gapCenterY) {
         this.x = x;

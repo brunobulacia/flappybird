@@ -31,7 +31,7 @@ public class Game {
     private SoundManager sound;
 
     // estado del juego
-    private Bird[] birds = new Bird[2];
+    private Bird[] birds = new Bird[3];
     private List<Pipe> pipes;
     private float spawnTimer;
     private Random random;
@@ -89,6 +89,7 @@ public class Game {
     public void resetGame() {
         birds[0] = new Bird(0);
         birds[1] = new Bird(1);
+        birds[2] = new Bird(2); // pájaro gris para mostrar vidas restantes
         pipes.clear();
         spawnTimer = 0f;
         state = GameState.START;
@@ -108,7 +109,7 @@ public class Game {
             float dt = (now - lastTime) / 1_000_000_000f;
             lastTime = now;
             if (dt > 0.033f)
-                dt = 0.033f; // cap a 30 fps mínimo
+                dt = 0.033f;
 
             input.update();
             processInput();
@@ -157,6 +158,14 @@ public class Game {
             if (birds[1].alive)
                 sound.playJump();
         }
+
+        if (input.player3Jumped) {
+            if (state == GameState.START)
+                state = GameState.PLAYING;
+            birds[2].jump();
+            if (birds[2].alive)
+                sound.playJump();
+        }
     }
 
     // =========================================================
@@ -182,7 +191,7 @@ public class Game {
         for (Pipe pipe : pipes) {
             pipe.x -= getSpeed() * dt;
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 3; i++) {
                 Bird bird = birds[i];
 
                 // colisión AABB
@@ -206,8 +215,14 @@ public class Game {
         }
         pipes.removeAll(toRemove);
 
-        // game over cuando ambos están muertos
-        if (!birds[0].alive && !birds[1].alive) {
+        boolean alguienGano = false;
+        for (Bird bird : birds) {
+            if (bird.score >= 5) {
+                alguienGano = true;
+                break;
+            }
+        }
+        if (alguienGano || (!birds[0].alive && !birds[1].alive && !birds[2].alive)) {
             if (state != GameState.GAME_OVER && !gameOverSoundPlayed) {
                 sound.playGameOver();
                 gameOverSoundPlayed = true;
@@ -223,7 +238,7 @@ public class Game {
     // =========================================================
 
     public float getSpeed() {
-        int maxScore = Math.max(birds[0].score, birds[1].score);
+        int maxScore = Math.max(birds[0].score, Math.max(birds[1].score, birds[2].score));
         // crece 0.022 unidades por punto hasta el límite
         return Math.min(BASE_SPEED + maxScore * 0.022f, MAX_SPEED);
     }
@@ -233,7 +248,7 @@ public class Game {
     // =========================================================
 
     private float getSpawnInterval() {
-        int maxScore = Math.max(birds[0].score, birds[1].score);
+        int maxScore = Math.max(birds[0].score, Math.max(birds[1].score, birds[2].score));
         // se acorta 0.016s por punto hasta el mínimo
         return Math.max(BASE_SPAWN_INTERVAL - maxScore * 0.016f, MIN_SPAWN_INTERVAL);
     }
@@ -245,16 +260,18 @@ public class Game {
     private void updateWindowTitle() {
         String p1 = birds[0].alive ? "vivo" : "muerto";
         String p2 = birds[1].alive ? "vivo" : "muerto";
+        String p3 = birds[2].alive ? "vivo" : "muerto";
         String vel = String.format("%.1fx", getSpeed() / BASE_SPEED);
 
         String title = switch (state) {
             case START -> "Flappy Bird | P1: SPACE  P2: W/↑ | para empezar";
             case PLAYING -> String.format(
-                    "Flappy Bird | P1: %d pts (%s)  P2: %d pts (%s) | Vel: %s | Vidas: P1=%d P2=%d",
-                    birds[0].score, p1, birds[1].score, p2, vel, birds[0].lives, birds[1].lives);
+                    "Flappy Bird | P1: %d pts (%s)  P2: %d pts (%s)  P3: %d pts (%s) | Vel: %s | Vidas: P1=%d P2=%d P3=%d",
+                    birds[0].score, p1, birds[1].score, p2, birds[2].score, p3, vel, birds[0].lives, birds[1].lives,
+                    birds[2].lives);
             case GAME_OVER -> String.format(
-                    "Flappy Bird | P1: %d  P2: %d | GAME OVER — R/SPACE/W para reiniciar",
-                    birds[0].score, birds[1].score);
+                    "Flappy Bird | P1: %d  P2: %d  P3: %d | GAME OVER — R/SPACE/W para reiniciar",
+                    birds[0].score, birds[1].score, birds[2].score);
         };
         glfwSetWindowTitle(window, title);
     }
